@@ -120,7 +120,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8e56f01a7d273a0c67edb531e176e93b9f27cbe567bc84213b9b5c03bcb57b78"
+  digest = "1:6019f7d49498f02cd589d41db388e11470de1f218a0a534c52353788684d8cd9"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
@@ -131,15 +131,19 @@
     "poly1305",
     "ssh",
     "ssh/agent",
+    "ssh/terminal",
   ]
   pruneopts = "UT"
   revision = "614d502a4dac94afa3a6ce146bd1736da82514c6"
 
 [[projects]]
   branch = "master"
-  digest = "1:a3f00ac457c955fe86a41e1495e8f4c54cb5399d609374c5cc26aa7d72e542c8"
+  digest = "1:48774faa158e9eaee1ba45aad66434bb0345927b43756a24d4fe4c44ad79e307"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
   revision = "3b58ed4ad3395d483fc92d5d14123ce2c3581fec"
 
@@ -157,6 +161,7 @@
     "github.com/juju/loggo",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
+    "golang.org/x/crypto/ssh/terminal",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/binary"
-	"github.com/docker/docker/pkg/term"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
+	"golang.org/x/crypto/ssh/terminal"
 
 	"fmt"
 	"io/ioutil"
@@ -14,21 +14,21 @@ import (
 	"syscall"
 )
 
-func startSSH() error {
+func startSSH(ipAddr, keyName string) error {
 	width := 80
 	height := 24
 	sshConfig := &ssh.ClientConfig{
 		User: "ec2-user",
 		Auth: []ssh.AuthMethod{
 			SSHAgent(),
-			PublicKeyFile("/keys/" + *e.keyName),
+			PublicKeyFile("/keys/" + keyName),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
 		},
 	}
-	fmt.Printf("Opening connection to %v:22 with key %v", *e.ipAddr, "/keys/"+*e.keyName)
-	connection, err := ssh.Dial("tcp", *e.ipAddr+":22", sshConfig)
+	fmt.Printf("Opening connection to %v:22 with SSHAgent or key %v", ipAddr, "/keys/"+keyName)
+	connection, err := ssh.Dial("tcp", ipAddr+":22", sshConfig)
 	if err != nil {
 		return fmt.Errorf("Failed to dial: %s", err)
 	}
@@ -46,24 +46,24 @@ func startSSH() error {
 		ssh.ECHO: 1,
 	}
 
-	fd := os.Stdin.Fd()
+	fd := int(os.Stdin.Fd())
 
-	if term.IsTerminal(fd) {
-		oldState, err := term.MakeRaw(fd)
+	if terminal.IsTerminal(fd) {
+		oldState, err := terminal.MakeRaw(fd)
 		if err != nil {
 			return err
 		}
 
-		defer term.RestoreTerminal(fd, oldState)
+		defer terminal.Restore(fd, oldState)
 
-		winsize, err := term.GetWinsize(fd)
+		tmpWidth, tmpHeight, err := terminal.GetSize(fd)
 		if err == nil {
-			width = int(winsize.Width)
-			height = int(winsize.Height)
+			width = tmpWidth
+			height = tmpHeight
 		}
 	}
 
-	if err := session.RequestPty("xterm", width, height, modes); err != nil {
+	if err := session.RequestPty("xterm", height, width, modes); err != nil {
 		session.Close()
 		return fmt.Errorf("request for pseudo terminal failed: %s", err)
 	}
@@ -114,15 +114,15 @@ func monitorChanges(session *ssh.Session, fd uintptr) {
 func termSize(fd uintptr) []byte {
 	size := make([]byte, 16)
 
-	winsize, err := term.GetWinsize(fd)
+	width, height, err := terminal.GetSize(int(fd))
 	if err != nil {
 		binary.BigEndian.PutUint32(size, uint32(80))
 		binary.BigEndian.PutUint32(size[4:], uint32(24))
 		return size
 	}
 
-	binary.BigEndian.PutUint32(size, uint32(winsize.Width))
-	binary.BigEndian.PutUint32(size[4:], uint32(winsize.Height))
+	binary.BigEndian.PutUint32(size, uint32(width))
+	binary.BigEndian.PutUint32(size[4:], uint32(height))
 
 	return size
 }

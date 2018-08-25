@@ -289,7 +289,7 @@ func main() {
 			log.Panicln(err)
 		}
 		if e.ipAddr != nil {
-			err = startSSH()
+			err = startSSH(*e.ipAddr, *e.keyName)
 			if err != nil {
 				fmt.Printf("Error: %v\n\n", err)
 			}
