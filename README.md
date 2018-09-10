@@ -1,12 +1,15 @@
 # ecs-ssh
 A shell frontend to ssh into ECS instances. Will display ECS cluster, services and tasks, determine ssh ip, and let you ssh into the instance
 
-## build
+# Preview
+
+# Run
 ```
-make
+docker run --rm -it -e AWS_REGION=us-east-1 in4it/ecs-ssh
 ```
-## install
+
+## Manual build
 ```
-cp ecs-ssh-* /bin/ecs-ssh
+make && cp ecs-ssh-* /bin/ecs-ssh
 ```
 

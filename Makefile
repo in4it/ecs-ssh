@@ -5,7 +5,7 @@ GOARCH = amd64
 all: build
 
 build:
-	GOOS=linux GOARCH=${GOARCH} go build ${LDFLAGS} -o ${BINARY}-linux-${GOARCH} . ; 
+	CGO_ENABLED=0 GOOS=linux GOARCH=${GOARCH} go build ${LDFLAGS} -o ${BINARY}-linux-${GOARCH} . ; 
 
 clean:
 	rm -f ${BINARY}-linux-${GOARCH}
