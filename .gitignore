@@ -1,2 +1,3 @@
 vendor/*
 ecs-ssh-linux-amd64
+/ecs-ssh

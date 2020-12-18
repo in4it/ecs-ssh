@@ -1,15 +1,13 @@
 #
 # Build go project
 #
-FROM golang:1.11-alpine as go-builder
+FROM golang:1.15-alpine as go-builder
 
 WORKDIR /go/src/github.com/in4it/ecs-ssh/
 
 COPY . .
 
 RUN apk add -u -t build-tools curl git make && \
-    curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh && \
-    dep ensure && \
     make && \
     apk del build-tools && \
     rm -rf /var/cache/apk/*
