@@ -15,7 +15,7 @@ RUN apk add -u -t build-tools curl git make && \
 #
 # Runtime container
 #
-FROM alpine:latest  
+FROM alpine:3.18.3  
 
 RUN apk --no-cache add ca-certificates && \
     addgroup -g 1000 app && \
